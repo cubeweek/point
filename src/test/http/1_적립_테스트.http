@@ -1,0 +1,41 @@
+### 현재 적립된 포인트 확인
+GET http://localhost:8080/free-point/adidaslover
+
+### 포인트 적립 테스트 (수기 X)
+POST http://localhost:8080/free-point/earn
+Content-Type: application/json
+
+{
+  "memberId" : "adidaslover",
+  "amt" : 5000,
+  "manualYn" : false
+}
+### 포인트 적립 테스트 (수기 O)
+POST http://localhost:8080/free-point/earn
+Content-Type: application/json
+
+{
+  "memberId" : "adidaslover",
+  "amt" : 50,
+  "manualYn" : true
+}
+
+### 1회 한도 초과 적립 테스트
+POST http://localhost:8080/free-point/earn
+Content-Type: application/json
+
+{
+  "memberId" : "adidaslover",
+  "amt" : 110000,
+  "manualYn" : true
+}
+
+### 개인 보유 포인트 초과 테스트
+POST http://localhost:8080/free-point/earn
+Content-Type: application/json
+
+{
+  "memberId" : "nikehater",
+  "amt" : 100000,
+  "manualYn" : false
+}

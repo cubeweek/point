@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.musinsa.payment.point.free.repository.FreePointRepository">
+    <select id="selectUsablePointAmt" parameterType="String" resultType="Integer">
+        SELECT
+               SUM(AMT - USED_AMT) AS AMT
+        FROM POINT
+         WHERE MEMBER_ID = #{memberId}
+           AND EXPIRATION_DATE >= CURDATE()
+           AND TYPE = 'EARN'
+           AND CANCEL_YN = FALSE
+    </select>
+    <select id="selectUsablePointList" parameterType="String" resultType="com.musinsa.payment.point.free.model.Point">
+        SELECT
+            *
+        FROM POINT
+        WHERE MEMBER_ID = #{memberId}
+          AND EXPIRATION_DATE >= CURDATE()
+          AND TYPE = 'EARN'
+          AND AMT - USED_AMT > 0
+          AND CANCEL_YN = FALSE
+        ORDER BY MANUAL_YN DESC, EXPIRATION_DATE
+    </select>
+    <select id="selectPointByPointSrl" parameterType="Long" resultType="com.musinsa.payment.point.free.model.Point">
+        SELECT
+            *
+        FROM POINT
+        WHERE point_srl = #{pointSrl}
+    </select>
+
+    <insert id="insertPoint" parameterType="com.musinsa.payment.point.free.model.Point">
+        INSERT INTO POINT
+            (MEMBER_ID, TYPE, AMT, EXPIRATION_DATE, CANCEL_YN, MANUAL_YN, CREATE_BY)
+        VALUES
+            (#{memberId}, 'EARN', #{amt}, #{expirationDate}, false, #{manualYn}, #{createBy})
+    </insert>
+
+    <update id="updatePoint" parameterType="com.musinsa.payment.point.free.model.Point">
+        UPDATE POINT
+        SET CANCEL_YN = TRUE, UPDATE_BY = #{updateBy}, UPDATE_DT = NOW()
+        WHERE point_srl = #{pointSrl}
+    </update>
+
+    <insert id="insertUsePoint" parameterType="com.musinsa.payment.point.free.model.Point" useGeneratedKeys="true" keyProperty="pointSrl">
+        INSERT INTO POINT
+            (MEMBER_ID, BUY_SRL, TYPE, AMT)
+        VALUES
+            (#{memberId}, #{buySrl}, 'USE', #{amt})
+    </insert>
+
+    <update id="updateUsePoint" parameterType="com.musinsa.payment.point.free.model.Point">
+        UPDATE POINT
+        SET USED_AMT = #{usedAmt}, UPDATE_BY = #{updateBy}, UPDATE_DT = NOW()
+        WHERE POINT_SRL = #{pointSrl}
+        AND CANCEL_YN = FALSE
+    </update>
+
+    <select id="selectUsedPointListByPointSrl" parameterType="Long" resultType="com.musinsa.payment.point.free.model.Point">
+        SELECT
+            *
+        FROM POINT
+        WHERE UPDATE_BY = #{pointSrl}
+        AND TYPE = 'EARN'
+        AND EXPIRATION_DATE >= CURDATE()
+    </select>
+
+
+    <insert id="insertCancelUsePoint" parameterType="com.musinsa.payment.point.free.model.Point" useGeneratedKeys="true" keyProperty="pointSrl">
+        INSERT INTO POINT
+            (MEMBER_ID, TYPE, AMT, CREATE_BY)
+        VALUES
+            (#{memberId}, 'USE_CANCEL', #{amt}, #{pointSrl})
+    </insert>
+
+    <update id="updateCancelUsePoint" parameterType="com.musinsa.payment.point.free.model.Point">
+        UPDATE POINT
+        SET USED_AMT = #{usedAmt}, UPDATE_DT = NOW()
+        WHERE POINT_SRL = #{pointSrl}
+    </update>
+</mapper>

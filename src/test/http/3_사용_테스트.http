@@ -1,0 +1,9 @@
+### 포인트 사용 테스트
+POST http://localhost:8080/free-point/use
+Content-Type: application/json
+
+{
+  "memberId" : "adidaslover",
+  "amt" : 100,
+  "buySrl" : 1
+}

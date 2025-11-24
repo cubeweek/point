@@ -1,0 +1,18 @@
+### 포인트 사용 취소 테스트
+DELETE http://localhost:8080/free-point/use
+Content-Type: application/json
+
+{
+  "memberId" : "adidaslover",
+  "amt" : 500,
+  "pointSrl" : 4
+}
+### 포인트 사용 취소 테스트 - 이미 만료된 건 포함!
+DELETE http://localhost:8080/free-point/use
+Content-Type: application/json
+
+{
+  "memberId" : "adidaslover",
+  "amt" : 500,
+  "pointSrl" : 5
+}

@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: point
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL;
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  sql:
+    init:
+      mode: always
+      platform: h2
+      schema-locations: classpath:schema.sql
+mybatis:
+  mapper-locations: classpath:mappers/**/*.xml
+  configuration:
+    default-statement-timeout: 30
+    map-underscore-to-camel-case: true
+    jdbc-type-for-null: varchar
+    call-setters-on-nulls: true
+    auto-mapping-unknown-column-behavior: none
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+logging:
+  level:
+    org.mybatis: DEBUG
+    org.mybatis.spring: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 'beans'
